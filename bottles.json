@@ -7,8 +7,7 @@
     "age": 55,
     "price": 89100,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 2,
@@ -18,8 +17,7 @@
     "age": 50,
     "price": 57200,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 3,
@@ -29,8 +27,7 @@
     "age": 50,
     "price": 138600,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 4,
@@ -40,8 +37,7 @@
     "age": 48,
     "price": 89100,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 5,
@@ -51,8 +47,7 @@
     "age": 50,
     "price": 99000,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 6,
@@ -62,8 +57,7 @@
     "age": 49,
     "price": 112365,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 7,
@@ -73,8 +67,7 @@
     "age": 45,
     "price": 79970,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 8,
@@ -84,8 +77,7 @@
     "age": 37,
     "price": 28314,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 9,
@@ -95,8 +87,7 @@
     "age": 39,
     "price": 29700,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 10,
@@ -106,8 +97,7 @@
     "age": 37,
     "price": 118800,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 11,
@@ -117,8 +107,7 @@
     "age": 26,
     "price": 83974,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 12,
@@ -128,8 +117,7 @@
     "age": 33,
     "price": 77000,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 13,
@@ -139,8 +127,7 @@
     "age": 35,
     "price": 514800,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 14,
@@ -150,8 +137,7 @@
     "age": 34,
     "price": 88110,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 15,
@@ -161,8 +147,7 @@
     "age": 34,
     "price": 87340,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 16,
@@ -172,8 +157,7 @@
     "age": 33,
     "price": 33660,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 17,
@@ -183,8 +167,7 @@
     "age": 34,
     "price": 118800,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 18,
@@ -194,8 +177,7 @@
     "age": 28,
     "price": 217800,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 19,
@@ -205,8 +187,7 @@
     "age": 32,
     "price": 98890,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 20,
@@ -216,8 +197,7 @@
     "age": 32,
     "price": 127512,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 21,
@@ -227,8 +207,7 @@
     "age": 32,
     "price": 31680,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 22,
@@ -238,8 +217,7 @@
     "age": 31,
     "price": 389675,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 23,
@@ -249,8 +227,7 @@
     "age": 26,
     "price": 39605,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 24,
@@ -260,8 +237,7 @@
     "age": 30,
     "price": 39600,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 25,
@@ -271,8 +247,7 @@
     "age": 30,
     "price": 24750,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 26,
@@ -282,8 +257,7 @@
     "age": 30,
     "price": 53460,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 27,
@@ -293,8 +267,7 @@
     "age": 30,
     "price": 58300,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 28,
@@ -304,8 +277,7 @@
     "age": 31,
     "price": 80300,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 29,
@@ -315,8 +287,7 @@
     "age": 22,
     "price": 72000,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 30,
@@ -326,8 +297,7 @@
     "age": 30,
     "price": 69850,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 31,
@@ -337,8 +307,7 @@
     "age": 27,
     "price": 29590,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 32,
@@ -348,8 +317,7 @@
     "age": 27,
     "price": 40700,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 33,
@@ -359,8 +327,7 @@
     "age": 25,
     "price": 56430,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 34,
@@ -370,8 +337,7 @@
     "age": 25,
     "price": 38555,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 35,
@@ -381,8 +347,7 @@
     "age": 25,
     "price": 66000,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 36,
@@ -392,8 +357,7 @@
     "age": 25,
     "price": 58850,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 37,
@@ -403,8 +367,7 @@
     "age": 25,
     "price": 44550,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 38,
@@ -414,8 +377,7 @@
     "age": null,
     "price": 87780,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 39,
@@ -425,8 +387,7 @@
     "age": 25,
     "price": 55000,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 40,
@@ -436,8 +397,7 @@
     "age": 23,
     "price": 77000,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 41,
@@ -447,8 +407,7 @@
     "age": 22,
     "price": 28380,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 42,
@@ -458,8 +417,7 @@
     "age": 20,
     "price": 21780,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 43,
@@ -469,8 +427,7 @@
     "age": 23,
     "price": 37620,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 44,
@@ -480,8 +437,7 @@
     "age": 22,
     "price": 27720,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 45,
@@ -491,8 +447,7 @@
     "age": 22,
     "price": 26730,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 46,
@@ -502,8 +457,7 @@
     "age": 21,
     "price": 129800,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 47,
@@ -513,8 +467,7 @@
     "age": 24,
     "price": 58300,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 48,
@@ -524,8 +477,7 @@
     "age": 24,
     "price": 29150,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 49,
@@ -535,8 +487,7 @@
     "age": 21,
     "price": 22440,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 50,
@@ -546,8 +497,7 @@
     "age": 23,
     "price": 154000,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 51,
@@ -557,8 +507,7 @@
     "age": 19,
     "price": 34210,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 52,
@@ -568,8 +517,7 @@
     "age": 13,
     "price": 55440,
     "stock": "No",
-    "tasting": "No",
-    "public": false
+    "tasting": "No"
   },
   {
     "id": 53,
@@ -579,8 +527,7 @@
     "age": 19,
     "price": 35035,
     "stock": "Yes",
-    "tasting": "No",
-    "public": true
+    "tasting": "No"
   },
   {
     "id": 54,
@@ -590,8 +537,7 @@
     "age": 20,
     "price": 94050,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 55,
@@ -601,8 +547,7 @@
     "age": 10,
     "price": 10648,
     "stock": "No",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   },
   {
     "id": 56,
@@ -612,7 +557,6 @@
     "age": 17,
     "price": 38500,
     "stock": "Yes",
-    "tasting": "Yes",
-    "public": true
+    "tasting": "Yes"
   }
 ]

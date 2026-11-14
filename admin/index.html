@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="data:," />
+<title>管理画面 | Birth Year Vintage Selection</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:#000;font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;font-size:14px}
+  .page{max-width:1040px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:1.3rem;font-weight:700;margin:0 0 4px}
+  .sub{font-size:.85rem;margin:0 0 16px}
+  .box{border:1px solid #000;padding:12px;margin-bottom:16px}
+  .box-title{font-weight:700;margin:0 0 8px;font-size:.95rem}
+  .token-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .token-row input[type="password"], .token-row input[type="text"]{flex:1;min-width:220px;padding:6px 8px;border:1px solid #000;font-size:14px;background:#fff;color:#000}
+  .help{font-size:.8rem;margin:6px 0 0;color:#222}
+  button{padding:6px 12px;border:1px solid #000;background:#fff;color:#000;font-size:14px;cursor:pointer;font-family:inherit}
+  button:hover{background:#f0f0f0}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .btn-primary{background:#000;color:#fff;font-weight:700}
+  .btn-primary:hover{background:#333}
+  .toolbar{position:sticky;top:0;z-index:10;background:#fff;border-top:2px solid #000;border-bottom:2px solid #000;padding:10px 0;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .toolbar-left,.toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .dirty-badge{font-size:.8rem;font-weight:700;padding:2px 6px;border:1px solid #000;display:none}
+  .dirty-badge.visible{display:inline-block}
+  .status{margin-bottom:16px;padding:10px 12px;border:1px solid #000;font-size:.9rem;display:none;white-space:pre-wrap;word-break:break-word}
+  .status.visible{display:block}
+  .status.error{border-width:2px;background:#fff5f5;color:#a00}
+  .status.success{border-width:2px;background:#f7fff7}
+  .status a{color:#000;font-weight:700;text-decoration:underline}
+
+  .list-header{display:grid;grid-template-columns:54px 80px 1.6fr 1.2fr 70px 110px 76px 76px 64px;gap:8px;padding:8px 4px;border-bottom:2px solid #000;font-weight:700;font-size:.85rem}
+  .item-row{display:grid;grid-template-columns:54px 80px 1.6fr 1.2fr 70px 110px 76px 76px 64px;gap:8px;padding:10px 4px;border-bottom:1px solid #bbb;align-items:start}
+  .item-row.row-error{background:#fff0f0;border:2px solid #c00;padding:10px 6px;margin:4px 0}
+  .field{display:flex;flex-direction:column}
+  .field-label{display:none;font-size:.75rem;font-weight:700;margin-bottom:2px}
+  .id-cell{font-weight:700;padding-top:6px;font-size:.85rem}
+  .item-row input,.item-row select{width:100%;padding:6px;border:1px solid #777;background:#fff;color:#000;font-size:14px;font-family:inherit}
+  .item-row input:focus,.item-row select:focus{outline:2px solid #000;border-color:#000}
+  .row-err-msg{grid-column:1 / -1;color:#b00;font-size:.82rem;font-weight:700;margin-top:4px;display:none}
+  .item-row.row-error .row-err-msg{display:block}
+  .del-btn{padding:5px 8px;font-size:.8rem;width:100%}
+
+  @media(max-width:768px){
+    .list-header{display:none}
+    .item-row{grid-template-columns:1fr 1fr;gap:8px;padding:12px;border:1px solid #999;margin-bottom:12px}
+    .field-label{display:block}
+    .field-id{grid-column:1 / 2}
+    .field-year{grid-column:2 / 3}
+    .field-distillery{grid-column:1 / -1}
+    .field-bottler{grid-column:1 / -1}
+    .field-age{grid-column:1 / 2}
+    .field-price{grid-column:2 / 3}
+    .field-stock{grid-column:1 / 2}
+    .field-tasting{grid-column:2 / 3}
+    .field-action{grid-column:1 / -1;margin-top:4px}
+    .id-cell{padding-top:2px;font-size:.95rem}
+    .item-row input,.item-row select{font-size:16px;padding:8px}
+    .del-btn{padding:8px;font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Birth Year Vintage Selection 管理画面</h1>
+  <p class="sub"><a href="../" style="color:#000">← 公開ページを確認する</a></p>
+
+  <div class="box">
+    <p class="box-title">GitHub 認証設定（Fine-grained Personal Access Token）</p>
+    <div class="token-row">
+      <input type="password" id="token-input" placeholder="github_pat_..." autocomplete="off" />
+      <button type="button" id="token-save-btn">トークンを保存</button>
+      <button type="button" id="token-clear-btn">消去</button>
+    </div>
+    <p class="help" id="token-status"></p>
+    <p class="help">※ トークンはこのブラウザの localStorage にのみ保存されます（対象: ms-tastingroom/ms-tastingroom.github.io / 権限: Contents Read and write）。</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button type="button" id="add-btn">＋ 新規追加</button>
+      <span id="count-label" style="font-size:.85rem"></span>
+      <span id="dirty-badge" class="dirty-badge">未保存の変更あり</span>
+    </div>
+    <div class="toolbar-right">
+      <button type="button" id="save-btn" class="btn-primary">保存（GitHubへ反映）</button>
+    </div>
+  </div>
+
+  <div id="status-box" class="status"></div>
+
+  <div class="list-header">
+    <div>No.</div>
+    <div>蒸留年*</div>
+    <div>蒸留所 (distillery)*</div>
+    <div>ボトラー (bottler)</div>
+    <div>熟成年数</div>
+    <div>価格 (円)*</div>
+    <div>購入(stock)</div>
+    <div>試飲(tasting)</div>
+    <div>操作</div>
+  </div>
+
+  <div id="bottle-list">読み込み中...</div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = "ms_tastingroom_github_pat";
+  var REPO_OWNER = "ms-tastingroom";
+  var REPO_NAME = "ms-tastingroom.github.io";
+  var FILE_PATH = "bottles.json";
+  var API_URL = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/" + FILE_PATH;
+
+  var tokenInput = document.getElementById("token-input");
+  var tokenSaveBtn = document.getElementById("token-save-btn");
+  var tokenClearBtn = document.getElementById("token-clear-btn");
+  var tokenStatus = document.getElementById("token-status");
+  var addBtn = document.getElementById("add-btn");
+  var saveBtn = document.getElementById("save-btn");
+  var countLabel = document.getElementById("count-label");
+  var dirtyBadge = document.getElementById("dirty-badge");
+  var statusBox = document.getElementById("status-box");
+  var bottleList = document.getElementById("bottle-list");
+
+  var bottles = [];
+  var isDirty = false;
+  var nextTempKey = 1;
+
+  function setDirty(flag) {
+    isDirty = !!flag;
+    if (isDirty) {
+      dirtyBadge.classList.add("visible");
+    } else {
+      dirtyBadge.classList.remove("visible");
+    }
+  }
+
+  window.addEventListener("beforeunload", function (e) {
+    if (isDirty) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
+  function showStatus(msgHtml, type) {
+    statusBox.innerHTML = msgHtml;
+    statusBox.className = "status visible" + (type ? " " + type : "");
+  }
+
+  function clearStatus() {
+    statusBox.innerHTML = "";
+    statusBox.className = "status";
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;");
+  }
+
+  function getSavedToken() {
+    return (localStorage.getItem(STORAGE_KEY) || "").trim();
+  }
+
+  function refreshTokenUi() {
+    var t = getSavedToken();
+    if (t) {
+      tokenInput.value = t;
+      tokenStatus.textContent = "状態: トークン保存済み（" + t.slice(0, 11) + "...）";
+    } else {
+      tokenInput.value = "";
+      tokenStatus.textContent = "状態: トークン未設定（データの閲覧は可能ですが、保存にはトークンが必要です）";
+    }
+  }
+
+  tokenSaveBtn.addEventListener("click", function () {
+    var val = tokenInput.value.trim();
+    if (!val) {
+      alert("トークンを入力してください。");
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY, val);
+    refreshTokenUi();
+    showStatus("トークンをブラウザ（localStorage）に保存しました。", "success");
+  });
+
+  tokenClearBtn.addEventListener("click", function () {
+    localStorage.removeItem(STORAGE_KEY);
+    refreshTokenUi();
+    showStatus("保存されていたトークンを消去しました。", "");
+  });
+
+  function decodeBase64Utf8(b64) {
+    var clean = b64.replace(/\s+/g, "");
+    var binStr = atob(clean);
+    var bytes = new Uint8Array(binStr.length);
+    for (var i = 0; i < binStr.length; i++) {
+      bytes[i] = binStr.charCodeAt(i);
+    }
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+
+  function encodeBase64Utf8(str) {
+    var bytes = new TextEncoder().encode(str);
+    var binStr = "";
+    for (var i = 0; i < bytes.length; i++) {
+      binStr += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binStr);
+  }
+
+  function sortBottlesByYear(list) {
+    return list
+      .map(function (item, idx) { return { item: item, idx: idx }; })
+      .sort(function (a, b) {
+        var ya = Number(a.item.year) || 0;
+        var yb = Number(b.item.year) || 0;
+        return (ya - yb) || (a.idx - b.idx);
+      })
+      .map(function (entry) { return entry.item; });
+  }
+
+  function updateCountLabel() {
+    countLabel.textContent = "全 " + bottles.length + " 件";
+  }
+
+  function renderList() {
+    bottleList.innerHTML = "";
+    updateCountLabel();
+
+    bottles.forEach(function (b) {
+      var row = document.createElement("div");
+      row.className = "item-row";
+      row.dataset.key = String(b._key);
+
+      var idText = b.id !== null && b.id !== undefined ? ("No." + b.id) : "新規";
+
+      row.innerHTML =
+        '<div class="field field-id">' +
+          '<span class="field-label">No.</span>' +
+          '<div class="id-cell">' + escapeHtml(idText) + '</div>' +
+        '</div>' +
+        '<div class="field field-year">' +
+          '<span class="field-label">蒸留年 (year)*</span>' +
+          '<input type="number" name="year" min="1900" max="2100" step="1" value="' + escapeHtml(b.year) + '" placeholder="例: 1990" />' +
+        '</div>' +
+        '<div class="field field-distillery">' +
+          '<span class="field-label">蒸留所 (distillery)*</span>' +
+          '<input type="text" name="distillery" value="' + escapeHtml(b.distillery) + '" placeholder="必須" />' +
+        '</div>' +
+        '<div class="field field-bottler">' +
+          '<span class="field-label">ボトラー (bottler)</span>' +
+          '<input type="text" name="bottler" value="' + escapeHtml(b.bottler) + '" placeholder="例: OB" />' +
+        '</div>' +
+        '<div class="field field-age">' +
+          '<span class="field-label">熟成年数 (age)</span>' +
+          '<input type="number" name="age" min="0" step="1" value="' + escapeHtml(b.age !== null && b.age !== undefined ? b.age : "") + '" placeholder="―" />' +
+        '</div>' +
+        '<div class="field field-price">' +
+          '<span class="field-label">価格 (円)*</span>' +
+          '<input type="number" name="price" min="0" step="1" value="' + escapeHtml(b.price) + '" placeholder="例: 50000" />' +
+        '</div>' +
+        '<div class="field field-stock">' +
+          '<span class="field-label">購入 (stock)</span>' +
+          '<select name="stock">' +
+            '<option value="Yes"' + (b.stock === "Yes" ? " selected" : "") + '>Yes</option>' +
+            '<option value="No"' + (b.stock !== "Yes" ? " selected" : "") + '>No</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="field field-tasting">' +
+          '<span class="field-label">試飲 (tasting)</span>' +
+          '<select name="tasting">' +
+            '<option value="Yes"' + (b.tasting === "Yes" ? " selected" : "") + '>Yes</option>' +
+            '<option value="No"' + (b.tasting !== "Yes" ? " selected" : "") + '>No</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="field field-action">' +
+          '<span class="field-label">操作</span>' +
+          '<button type="button" class="del-btn">削除</button>' +
+        '</div>' +
+        '<div class="row-err-msg"></div>';
+
+      var inputs = row.querySelectorAll("input, select");
+      inputs.forEach(function (el) {
+        el.addEventListener("input", function () {
+          syncRowToModel(row, b);
+          setDirty(true);
+        });
+        el.addEventListener("change", function () {
+          syncRowToModel(row, b);
+          setDirty(true);
+        });
+      });
+
+      var delBtn = row.querySelector(".del-btn");
+      delBtn.addEventListener("click", function () {
+        var label = (b.id ? "No." + b.id : "新規行") + (b.distillery ? " (" + b.distillery + ")" : "");
+        if (!window.confirm(label + " を削除しますか？\n（※「保存」ボタンを押すまでリポジトリには反映されません）")) {
+          return;
+        }
+        bottles = bottles.filter(function (item) { return item._key !== b._key; });
+        setDirty(true);
+        renderList();
+      });
+
+      bottleList.appendChild(row);
+    });
+  }
+
+  function syncRowToModel(row, b) {
+    b.year = row.querySelector('[name="year"]').value;
+    b.distillery = row.querySelector('[name="distillery"]').value;
+    b.bottler = row.querySelector('[name="bottler"]').value;
+    b.age = row.querySelector('[name="age"]').value;
+    b.price = row.querySelector('[name="price"]').value;
+    b.stock = row.querySelector('[name="stock"]').value;
+    b.tasting = row.querySelector('[name="tasting"]').value;
+  }
+
+  addBtn.addEventListener("click", function () {
+    var newItem = {
+      _key: nextTempKey++,
+      id: null,
+      year: "",
+      bottler: "",
+      distillery: "",
+      age: "",
+      price: "",
+      stock: "Yes",
+      tasting: "Yes"
+    };
+    bottles.push(newItem);
+    setDirty(true);
+    renderList();
+
+    var rows = bottleList.querySelectorAll(".item-row");
+    var lastRow = rows[rows.length - 1];
+    if (lastRow) {
+      lastRow.scrollIntoView({ behavior: "smooth", block: "center" });
+      var yearInput = lastRow.querySelector('[name="year"]');
+      if (yearInput) yearInput.focus();
+    }
+  });
+
+  function validateAll() {
+    var rows = bottleList.querySelectorAll(".item-row");
+    var errorSummary = [];
+    var firstErrorRow = null;
+
+    rows.forEach(function (row, index) {
+      row.classList.remove("row-error");
+      var errEl = row.querySelector(".row-err-msg");
+      errEl.textContent = "";
+
+      var b = bottles[index];
+      syncRowToModel(row, b);
+
+      var rowErrors = [];
+      var yearStr = String(b.year ?? "").trim();
+      var yearNum = Number(yearStr);
+      if (yearStr === "" || !/^-?\d+$/.test(yearStr) || !Number.isInteger(yearNum) || yearNum < 1900 || yearNum > 2100) {
+        rowErrors.push("蒸留年(year)は1900〜2100の整数で入力してください");
+      }
+
+      var distStr = String(b.distillery ?? "").trim();
+      if (distStr === "") {
+        rowErrors.push("蒸留所(distillery)は必須です");
+      }
+
+      var priceStr = String(b.price ?? "").trim();
+      var priceNum = Number(priceStr);
+      if (priceStr === "" || Number.isNaN(priceNum) || priceNum < 0) {
+        rowErrors.push("価格(price)は0以上の数値で入力してください");
+      }
+
+      var ageStr = String(b.age ?? "").trim();
+      if (ageStr !== "") {
+        var ageNum = Number(ageStr);
+        if (Number.isNaN(ageNum) || !Number.isInteger(ageNum) || ageNum < 0) {
+          rowErrors.push("熟成年数(age)は空欄または0以上の整数で入力してください");
+        }
+      }
+
+      if (rowErrors.length > 0) {
+        row.classList.add("row-error");
+        errEl.textContent = "エラー: " + rowErrors.join(" ／ ");
+        var rowLabel = b.id !== null && b.id !== undefined ? ("No." + b.id) : ("新規行(" + (index + 1) + "行目)");
+        errorSummary.push("・" + rowLabel + ": " + rowErrors.join(" ／ "));
+        if (!firstErrorRow) firstErrorRow = row;
+      }
+    });
+
+    if (errorSummary.length > 0) {
+      showStatus("入力内容にエラーがあるため保存できませんでした。\n" + errorSummary.join("\n"), "error");
+      if (firstErrorRow) {
+        firstErrorRow.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return false;
+    }
+    return true;
+  }
+
+  function buildPayloadData() {
+    var maxId = 0;
+    bottles.forEach(function (b) {
+      if (typeof b.id === "number" && b.id > maxId) {
+        maxId = b.id;
+      }
+    });
+
+    var normalized = bottles.map(function (b) {
+      var assignedId = (typeof b.id === "number" && b.id > 0) ? b.id : (++maxId);
+      var ageStr = String(b.age ?? "").trim();
+      return {
+        id: assignedId,
+        year: Number(String(b.year).trim()),
+        bottler: String(b.bottler ?? "").trim(),
+        distillery: String(b.distillery ?? "").trim(),
+        age: ageStr === "" ? null : Number(ageStr),
+        price: Number(String(b.price).trim()),
+        stock: b.stock === "Yes" ? "Yes" : "No",
+        tasting: b.tasting === "Yes" ? "Yes" : "No"
+      };
+    });
+
+    return sortBottlesByYear(normalized);
+  }
+
+  saveBtn.addEventListener("click", function () {
+    clearStatus();
+    if (!validateAll()) {
+      return;
+    }
+
+    var token = getSavedToken() || tokenInput.value.trim();
+    if (!token) {
+      showStatus("エラー: GitHub Personal Access Token が設定されていません。画面上部の入力欄にトークンを入力して保存してください。", "error");
+      tokenInput.focus();
+      return;
+    }
+    if (token !== getSavedToken()) {
+      localStorage.setItem(STORAGE_KEY, token);
+      refreshTokenUi();
+    }
+
+    saveBtn.disabled = true;
+    addBtn.disabled = true;
+    showStatus("GitHub API へ保存中です...", "");
+
+    var headers = {
+      "Accept": "application/vnd.github+json",
+      "Authorization": "Bearer " + token,
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+
+    fetch(API_URL + "?t=" + Date.now(), {
+      method: "GET",
+      headers: headers,
+      cache: "no-store"
+    })
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (errBody) {
+            var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+            if (res.status === 401 || res.status === 403) {
+              throw new Error("認証エラー (HTTP " + res.status + "): トークンが無効・期限切れか、リポジトリへの権限が不足しています。" + detail);
+            }
+            throw new Error("現在の bottles.json の取得に失敗しました (HTTP " + res.status + ")" + detail);
+          });
+        }
+        return res.json();
+      })
+      .then(function (meta) {
+        var currentSha = meta.sha;
+        var sortedData = buildPayloadData();
+        var jsonString = JSON.stringify(sortedData, null, 2) + "\n";
+        var contentBase64 = encodeBase64Utf8(jsonString);
+
+        return fetch(API_URL, {
+          method: "PUT",
+          headers: {
+            "Accept": "application/vnd.github+json",
+            "Authorization": "Bearer " + token,
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: "Update bottles via admin",
+            content: contentBase64,
+            sha: currentSha
+          })
+        }).then(function (putRes) {
+          if (!putRes.ok) {
+            return putRes.json().catch(function () { return {}; }).then(function (errBody) {
+              var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+              if (putRes.status === 401 || putRes.status === 403 || putRes.status === 404) {
+                throw new Error("保存失敗 (HTTP " + putRes.status + "): トークンが無効・失効しているか、Contents: Read and write 権限がありません。" + detail);
+              }
+              throw new Error("bottles.json の更新コミットに失敗しました (HTTP " + putRes.status + ")" + detail);
+            });
+          }
+          return putRes.json().then(function (putJson) {
+            return { putJson: putJson, sortedData: sortedData };
+          });
+        });
+      })
+      .then(function (result) {
+        bottles = result.sortedData.map(function (b) {
+          return Object.assign({ _key: nextTempKey++ }, b);
+        });
+        setDirty(false);
+        renderList();
+
+        var commitUrl = (result.putJson && result.putJson.commit && result.putJson.commit.html_url) || ("https://github.com/" + REPO_OWNER + "/" + REPO_NAME + "/commits/main");
+        var commitSha = (result.putJson && result.putJson.commit && result.putJson.commit.sha) ? result.putJson.commit.sha.slice(0, 7) : "確認する";
+        showStatus(
+          "保存が完了しました。コミット: <a href=\"" + escapeHtml(commitUrl) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(commitSha) + " (" + escapeHtml(commitUrl) + ")</a>\n" +
+          "※ 公開サイトへの反映は GitHub Pages のデプロイ後（1〜2分後）になります。",
+          "success"
+        );
+      })
+      .catch(function (err) {
+        showStatus(escapeHtml(err.message || String(err)), "error");
+      })
+      .finally(function () {
+        saveBtn.disabled = false;
+        addBtn.disabled = false;
+      });
+  });
+
+  function loadInitialData() {
+    refreshTokenUi();
+
+    fetch(API_URL + "?t=" + Date.now(), {
+      method: "GET",
+      headers: { "Accept": "application/vnd.github+json" },
+      cache: "no-store"
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("GitHub API fetch failed: " + res.status);
+        return res.json();
+      })
+      .then(function (meta) {
+        var jsonStr = decodeBase64Utf8(meta.content);
+        return JSON.parse(jsonStr);
+      })
+      .catch(function () {
+        return fetch("../bottles.json?t=" + Date.now(), { cache: "no-store" }).then(function (res) {
+          if (!res.ok) throw new Error("bottles.json の読み込みに失敗しました (" + res.status + ")");
+          return res.json();
+        });
+      })
+      .then(function (data) {
+        var sorted = sortBottlesByYear(data);
+        bottles = sorted.map(function (b) {
+          return {
+            _key: nextTempKey++,
+            id: b.id,
+            year: b.year,
+            bottler: b.bottler ?? "",
+            distillery: b.distillery ?? "",
+            age: b.age,
+            price: b.price,
+            stock: b.stock === "Yes" ? "Yes" : "No",
+            tasting: b.tasting === "Yes" ? "Yes" : "No"
+          };
+        });
+        setDirty(false);
+        renderList();
+      })
+      .catch(function (err) {
+        bottleList.textContent = "";
+        showStatus("データの読み込みに失敗しました: " + escapeHtml(err.message || String(err)), "error");
+      });
+  }
+
+  loadInitialData();
+})();
+</script>
+</body>
+</html>
