@@ -333,7 +333,7 @@
     "distillery": "Jura",
     "age": 30,
     "price": 69850,
-    "stock": "Yes",
+    "stock": "No",
     "tasting": "No"
   },
   {
@@ -421,12 +421,13 @@
   {
     "id": 38,
     "year": 1998,
-    "bottler": "Shinanoya",
+    "bottler": "BRISTOL CLASSIC RUM",
     "distillery": "Caroni for Rum and Whisky Kyoto 15th Anniversary",
     "age": null,
     "price": 87780,
     "stock": "Yes",
-    "tasting": "No"
+    "tasting": "Yes",
+    "image": "images/bottle-38-20261114144345.jpg"
   },
   {
     "id": 39,
