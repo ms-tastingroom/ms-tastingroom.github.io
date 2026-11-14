@@ -27,17 +27,19 @@
     "age": 50,
     "price": 138600,
     "stock": "Yes",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-3-20261114142803.jpg"
   },
   {
     "id": 4,
-    "year": 1972,
+    "year": 1973,
     "bottler": "Meadowside Blending",
     "distillery": "Excalibur",
     "age": 48,
     "price": 89100,
     "stock": "Yes",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-4-20261114142806.jpg"
   },
   {
     "id": 5,
@@ -58,7 +60,8 @@
     "age": 49,
     "price": 112365,
     "stock": "No",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-6-20261114142808.jpg"
   },
   {
     "id": 7,
