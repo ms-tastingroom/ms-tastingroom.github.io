@@ -576,7 +576,8 @@
     "age": 19,
     "price": 35035,
     "stock": "Yes",
-    "tasting": "No"
+    "tasting": "No",
+    "image": "images/bottle-53-20261114144002.jpg"
   },
   {
     "id": 54,
@@ -586,7 +587,8 @@
     "age": 20,
     "price": 94050,
     "stock": "Yes",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-54-20261114144004.jpg"
   },
   {
     "id": 55,
