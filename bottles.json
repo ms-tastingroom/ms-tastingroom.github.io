@@ -186,7 +186,7 @@
     "distillery": "Bladnoch",
     "age": 34,
     "price": 118800,
-    "stock": "Yes",
+    "stock": "No",
     "tasting": "No"
   },
   {
@@ -218,7 +218,8 @@
     "age": 32,
     "price": 98890,
     "stock": "No",
-    "tasting": "No"
+    "tasting": "No",
+    "image": "images/bottle-19-20261114143401.jpg"
   },
   {
     "id": 20,
@@ -228,7 +229,8 @@
     "age": 32,
     "price": 127512,
     "stock": "Yes",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-20-20261114143403.jpg"
   },
   {
     "id": 21,
@@ -248,7 +250,8 @@
     "age": 31,
     "price": 389675,
     "stock": "Yes",
-    "tasting": "No"
+    "tasting": "No",
+    "image": "images/bottle-22-20261114143405.jpg"
   },
   {
     "id": 23,
