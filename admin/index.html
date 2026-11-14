@@ -257,29 +257,29 @@
       reader.onload = function (e) {
         var img = new Image();
         img.onload = function () {
-          var w = img.naturalWidth || img.width;
-          var h = img.naturalHeight || img.height;
-          if (!w || !h) {
+          var srcW = img.naturalWidth || img.width;
+          var srcH = img.naturalHeight || img.height;
+          if (!srcW || !srcH) {
             reject(new Error("画像サイズの取得に失敗しました"));
             return;
           }
-          var maxSide = 1200;
-          if (w > maxSide || h > maxSide) {
-            if (w >= h) {
-              h = Math.round((h * maxSide) / w);
-              w = maxSide;
-            } else {
-              w = Math.round((w * maxSide) / h);
-              h = maxSide;
-            }
-          }
+          // 3:4 キャンバス（最大 900x1200、元画像が小さい場合は拡大せず元サイズ基準で 3:4 にする）
+          var unit = Math.min(300, Math.max(1, Math.ceil(srcW / 3), Math.ceil(srcH / 4)));
+          var canvasW = unit * 3;
+          var canvasH = unit * 4;
+          var scale = Math.min(1, canvasW / srcW, canvasH / srcH);
+          var drawW = Math.round(srcW * scale);
+          var drawH = Math.round(srcH * scale);
+          var offsetX = Math.round((canvasW - drawW) / 2);
+          var offsetY = Math.round((canvasH - drawH) / 2);
+
           var canvas = document.createElement("canvas");
-          canvas.width = w;
-          canvas.height = h;
+          canvas.width = canvasW;
+          canvas.height = canvasH;
           var ctx = canvas.getContext("2d");
           ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, w, h);
-          ctx.drawImage(img, 0, 0, w, h);
+          ctx.fillRect(0, 0, canvasW, canvasH);
+          ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
           var dataUrl = canvas.toDataURL("image/jpeg", 0.82);
           var prefix = "data:image/jpeg;base64,";
           if (dataUrl.indexOf(prefix) !== 0) {
