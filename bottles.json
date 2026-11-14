@@ -57,7 +57,8 @@
     "age": 49,
     "price": 112365,
     "stock": "No",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-6-20261114134401.jpg"
   },
   {
     "id": 7,
