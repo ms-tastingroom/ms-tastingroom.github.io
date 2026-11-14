@@ -20,6 +20,7 @@
   .note{font-size:.88rem;margin:0}
   .row{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #bbb}
   .year{font-size:1.5rem;font-weight:700;line-height:1.3;min-width:64px}
+  .thumb{width:90px;height:auto;align-self:flex-start;flex-shrink:0;display:block}
   .body p{margin:0}
   .name{font-weight:700;font-size:1rem}
   .line{font-size:.9rem}
@@ -45,12 +46,7 @@
 
   <main id="available-list"></main>
 
-  <h2>現在ご提供なし</h2>
-  <p class="note">以下は現在、ボトル購入・有料試飲ともご提供していないボトルです。</p>
-  <div id="unavailable-list"></div>
-
   <footer>
-    <p>掲載の価格・在庫状況は変動しますので、最新の価格・在庫は店頭でご確認ください。</p>
     <p>20歳未満の方への酒類の販売・提供は法律で禁止されています。お酒は20歳になってから。飲酒運転は法律で禁止されています。</p>
   </footer>
 
@@ -82,9 +78,13 @@
     var priceStr = "¥" + Number(b.price).toLocaleString("ja-JP");
     var stockStr = b.stock === "Yes" ? "可" : "―";
     var tastingStr = b.tasting === "Yes" ? "可" : "―";
+    var imgHtml = b.image
+      ? "  <img class=\"thumb\" src=\"" + escapeHtml(b.image) + "\" alt=\"" + escapeHtml(b.distillery) + "\" loading=\"lazy\" />\n"
+      : "";
     return (
       "<div class=\"row\">\n" +
       "  <div class=\"year\">" + escapeHtml(b.year) + "</div>\n" +
+      imgHtml +
       "  <div class=\"body\">\n" +
       "    <p class=\"name\">" + name + "</p>\n" +
       "    <p class=\"line\">" + bottler + "</p>\n" +
@@ -107,18 +107,14 @@
         .map(function (entry) { return entry.item; });
 
       var avail = [];
-      var unavail = [];
       for (var i = 0; i < sorted.length; i++) {
         var b = sorted[i];
         if (b.stock === "Yes" || b.tasting === "Yes") {
           avail.push(renderRow(b));
-        } else {
-          unavail.push(renderRow(b));
         }
       }
 
       document.getElementById("available-list").innerHTML = avail.join("\n");
-      document.getElementById("unavailable-list").innerHTML = unavail.join("\n");
     })
     .catch(function (err) {
       console.error(err);

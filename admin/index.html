@@ -10,7 +10,7 @@
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#fff;color:#000;font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;font-size:14px}
-  .page{max-width:1040px;margin:0 auto;padding:20px 16px 60px}
+  .page{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
   h1{font-size:1.3rem;font-weight:700;margin:0 0 4px}
   .sub{font-size:.85rem;margin:0 0 16px}
   .box{border:1px solid #000;padding:12px;margin-bottom:16px}
@@ -18,8 +18,8 @@
   .token-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .token-row input[type="password"], .token-row input[type="text"]{flex:1;min-width:220px;padding:6px 8px;border:1px solid #000;font-size:14px;background:#fff;color:#000}
   .help{font-size:.8rem;margin:6px 0 0;color:#222}
-  button{padding:6px 12px;border:1px solid #000;background:#fff;color:#000;font-size:14px;cursor:pointer;font-family:inherit}
-  button:hover{background:#f0f0f0}
+  button,.file-label{padding:6px 12px;border:1px solid #000;background:#fff;color:#000;font-size:14px;cursor:pointer;font-family:inherit;display:inline-block;text-align:center}
+  button:hover,.file-label:hover{background:#f0f0f0}
   button:disabled{opacity:.5;cursor:not-allowed}
   .btn-primary{background:#000;color:#fff;font-weight:700}
   .btn-primary:hover{background:#333}
@@ -33,19 +33,28 @@
   .status.success{border-width:2px;background:#f7fff7}
   .status a{color:#000;font-weight:700;text-decoration:underline}
 
-  .list-header{display:grid;grid-template-columns:54px 80px 1.6fr 1.2fr 70px 110px 76px 76px 64px;gap:8px;padding:8px 4px;border-bottom:2px solid #000;font-weight:700;font-size:.85rem}
-  .item-row{display:grid;grid-template-columns:54px 80px 1.6fr 1.2fr 70px 110px 76px 76px 64px;gap:8px;padding:10px 4px;border-bottom:1px solid #bbb;align-items:start}
+  .list-header{display:grid;grid-template-columns:48px 72px 1.4fr 1fr 64px 96px 68px 68px 180px 58px;gap:8px;padding:8px 4px;border-bottom:2px solid #000;font-weight:700;font-size:.82rem}
+  .item-row{display:grid;grid-template-columns:48px 72px 1.4fr 1fr 64px 96px 68px 68px 180px 58px;gap:8px;padding:10px 4px;border-bottom:1px solid #bbb;align-items:start}
   .item-row.row-error{background:#fff0f0;border:2px solid #c00;padding:10px 6px;margin:4px 0}
   .field{display:flex;flex-direction:column}
   .field-label{display:none;font-size:.75rem;font-weight:700;margin-bottom:2px}
   .id-cell{font-weight:700;padding-top:6px;font-size:.85rem}
-  .item-row input,.item-row select{width:100%;padding:6px;border:1px solid #777;background:#fff;color:#000;font-size:14px;font-family:inherit}
+  .item-row input[type="text"],.item-row input[type="number"],.item-row select{width:100%;padding:6px;border:1px solid #777;background:#fff;color:#000;font-size:13px;font-family:inherit}
   .item-row input:focus,.item-row select:focus{outline:2px solid #000;border-color:#000}
   .row-err-msg{grid-column:1 / -1;color:#b00;font-size:.82rem;font-weight:700;margin-top:4px;display:none}
   .item-row.row-error .row-err-msg{display:block}
-  .del-btn{padding:5px 8px;font-size:.8rem;width:100%}
+  .del-btn{padding:5px 6px;font-size:.8rem;width:100%}
 
-  @media(max-width:768px){
+  .img-cell{display:flex;gap:8px;align-items:flex-start}
+  .img-thumb-wrap{width:54px;min-height:54px;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fafafa;flex-shrink:0;overflow:hidden}
+  .img-thumb-wrap img{width:54px;height:auto;display:block}
+  .img-none{font-size:.7rem;color:#666;text-align:center;line-height:1.2;padding:2px}
+  .img-controls{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+  .img-file-input{font-size:.75rem;width:100%;display:none}
+  .img-btn-small{padding:3px 6px;font-size:.75rem;width:100%}
+  .img-state-note{font-size:.7rem;color:#333;word-break:break-all}
+
+  @media(max-width:860px){
     .list-header{display:none}
     .item-row{grid-template-columns:1fr 1fr;gap:8px;padding:12px;border:1px solid #999;margin-bottom:12px}
     .field-label{display:block}
@@ -57,10 +66,13 @@
     .field-price{grid-column:2 / 3}
     .field-stock{grid-column:1 / 2}
     .field-tasting{grid-column:2 / 3}
+    .field-image{grid-column:1 / -1}
     .field-action{grid-column:1 / -1;margin-top:4px}
     .id-cell{padding-top:2px;font-size:.95rem}
-    .item-row input,.item-row select{font-size:16px;padding:8px}
-    .del-btn{padding:8px;font-size:14px}
+    .item-row input[type="text"],.item-row input[type="number"],.item-row select{font-size:16px;padding:8px}
+    .img-btn-small,.del-btn{padding:8px;font-size:14px}
+    .img-thumb-wrap{width:72px;min-height:72px}
+    .img-thumb-wrap img{width:72px}
   }
 </style>
 </head>
@@ -100,8 +112,9 @@
     <div>ボトラー (bottler)</div>
     <div>熟成年数</div>
     <div>価格 (円)*</div>
-    <div>購入(stock)</div>
-    <div>試飲(tasting)</div>
+    <div>購入</div>
+    <div>試飲</div>
+    <div>画像</div>
     <div>操作</div>
   </div>
 
@@ -114,7 +127,8 @@
   var REPO_OWNER = "ms-tastingroom";
   var REPO_NAME = "ms-tastingroom.github.io";
   var FILE_PATH = "bottles.json";
-  var API_URL = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/" + FILE_PATH;
+  var API_BASE = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/";
+  var API_URL = API_BASE + FILE_PATH;
 
   var tokenInput = document.getElementById("token-input");
   var tokenSaveBtn = document.getElementById("token-save-btn");
@@ -128,8 +142,10 @@
   var bottleList = document.getElementById("bottle-list");
 
   var bottles = [];
+  var removedRowImages = [];
   var isDirty = false;
   var nextTempKey = 1;
+  var lastTimestampNum = 0;
 
   function setDirty(flag) {
     isDirty = !!flag;
@@ -217,6 +233,76 @@
     return btoa(binStr);
   }
 
+  function generateTimestamp() {
+    var now = new Date();
+    function pad(n) { return n < 10 ? "0" + n : String(n); }
+    var num = Number(
+      String(now.getFullYear()) +
+      pad(now.getMonth() + 1) +
+      pad(now.getDate()) +
+      pad(now.getHours()) +
+      pad(now.getMinutes()) +
+      pad(now.getSeconds())
+    );
+    if (num <= lastTimestampNum) {
+      num = lastTimestampNum + 1;
+    }
+    lastTimestampNum = num;
+    return String(num);
+  }
+
+  function resizeAndCompressImage(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var w = img.naturalWidth || img.width;
+          var h = img.naturalHeight || img.height;
+          if (!w || !h) {
+            reject(new Error("画像サイズの取得に失敗しました"));
+            return;
+          }
+          var maxSide = 1200;
+          if (w > maxSide || h > maxSide) {
+            if (w >= h) {
+              h = Math.round((h * maxSide) / w);
+              w = maxSide;
+            } else {
+              w = Math.round((w * maxSide) / h);
+              h = maxSide;
+            }
+          }
+          var canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+          var prefix = "data:image/jpeg;base64,";
+          if (dataUrl.indexOf(prefix) !== 0) {
+            reject(new Error("JPEGへの変換に失敗しました"));
+            return;
+          }
+          resolve({
+            dataUrl: dataUrl,
+            base64: dataUrl.slice(prefix.length)
+          });
+        };
+        img.onerror = function () {
+          reject(new Error("画像ファイルのデコードに失敗しました"));
+        };
+        img.src = e.target.result;
+      };
+      reader.onerror = function () {
+        reject(new Error("画像ファイルの読み込みに失敗しました"));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   function sortBottlesByYear(list) {
     return list
       .map(function (item, idx) { return { item: item, idx: idx }; })
@@ -232,6 +318,29 @@
     countLabel.textContent = "全 " + bottles.length + " 件";
   }
 
+  function renderImagePreviewHtml(b) {
+    if (b.previewUrl) {
+      return '<img src="' + escapeHtml(b.previewUrl) + '" alt="プレビュー" />';
+    }
+    if (b.image) {
+      return '<img src="../' + escapeHtml(b.image) + '" alt="現在の画像" loading="lazy" />';
+    }
+    return '<span class="img-none">画像なし</span>';
+  }
+
+  function renderImageNoteText(b) {
+    if (b.pendingFile) {
+      return "未保存: " + b.pendingFile.name;
+    }
+    if (b.image) {
+      return "登録済";
+    }
+    if (b.originalImage && !b.image) {
+      return "削除予定(未保存)";
+    }
+    return "";
+  }
+
   function renderList() {
     bottleList.innerHTML = "";
     updateCountLabel();
@@ -242,6 +351,7 @@
       row.dataset.key = String(b._key);
 
       var idText = b.id !== null && b.id !== undefined ? ("No." + b.id) : "新規";
+      var hasAnyImage = !!(b.previewUrl || b.image);
 
       row.innerHTML =
         '<div class="field field-id">' +
@@ -282,13 +392,25 @@
             '<option value="No"' + (b.tasting !== "Yes" ? " selected" : "") + '>No</option>' +
           '</select>' +
         '</div>' +
+        '<div class="field field-image">' +
+          '<span class="field-label">画像</span>' +
+          '<div class="img-cell">' +
+            '<div class="img-thumb-wrap">' + renderImagePreviewHtml(b) + '</div>' +
+            '<div class="img-controls">' +
+              '<input type="file" accept="image/*" class="img-file-input" />' +
+              '<button type="button" class="img-btn-small img-select-btn">画像を選択</button>' +
+              '<button type="button" class="img-btn-small img-remove-btn"' + (hasAnyImage ? '' : ' disabled') + '>画像を削除</button>' +
+              '<span class="img-state-note">' + escapeHtml(renderImageNoteText(b)) + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
         '<div class="field field-action">' +
           '<span class="field-label">操作</span>' +
           '<button type="button" class="del-btn">削除</button>' +
         '</div>' +
         '<div class="row-err-msg"></div>';
 
-      var inputs = row.querySelectorAll("input, select");
+      var inputs = row.querySelectorAll('input[type="text"], input[type="number"], select');
       inputs.forEach(function (el) {
         el.addEventListener("input", function () {
           syncRowToModel(row, b);
@@ -300,11 +422,55 @@
         });
       });
 
+      var fileInput = row.querySelector(".img-file-input");
+      var selectBtn = row.querySelector(".img-select-btn");
+      var removeImgBtn = row.querySelector(".img-remove-btn");
+      var thumbWrap = row.querySelector(".img-thumb-wrap");
+      var stateNote = row.querySelector(".img-state-note");
+
+      selectBtn.addEventListener("click", function () {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", function () {
+        var file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        resizeAndCompressImage(file)
+          .then(function (compressed) {
+            b.pendingFile = file;
+            b.pendingBase64 = compressed.base64;
+            b.previewUrl = compressed.dataUrl;
+            thumbWrap.innerHTML = renderImagePreviewHtml(b);
+            stateNote.textContent = renderImageNoteText(b);
+            removeImgBtn.disabled = false;
+            setDirty(true);
+          })
+          .catch(function (err) {
+            alert("画像の読み込みに失敗しました: " + (err.message || String(err)));
+            fileInput.value = "";
+          });
+      });
+
+      removeImgBtn.addEventListener("click", function () {
+        b.pendingFile = null;
+        b.pendingBase64 = null;
+        b.previewUrl = null;
+        b.image = null;
+        fileInput.value = "";
+        thumbWrap.innerHTML = renderImagePreviewHtml(b);
+        stateNote.textContent = renderImageNoteText(b);
+        removeImgBtn.disabled = true;
+        setDirty(true);
+      });
+
       var delBtn = row.querySelector(".del-btn");
       delBtn.addEventListener("click", function () {
         var label = (b.id ? "No." + b.id : "新規行") + (b.distillery ? " (" + b.distillery + ")" : "");
         if (!window.confirm(label + " を削除しますか？\n（※「保存」ボタンを押すまでリポジトリには反映されません）")) {
           return;
+        }
+        if (b.originalImage) {
+          removedRowImages.push(b.originalImage);
         }
         bottles = bottles.filter(function (item) { return item._key !== b._key; });
         setDirty(true);
@@ -335,7 +501,12 @@
       age: "",
       price: "",
       stock: "Yes",
-      tasting: "Yes"
+      tasting: "Yes",
+      image: null,
+      originalImage: null,
+      pendingFile: null,
+      pendingBase64: null,
+      previewUrl: null
     };
     bottles.push(newItem);
     setDirty(true);
@@ -408,19 +579,109 @@
     return true;
   }
 
-  function buildPayloadData() {
+  function assignIdsToNewBottles() {
     var maxId = 0;
     bottles.forEach(function (b) {
       if (typeof b.id === "number" && b.id > maxId) {
         maxId = b.id;
       }
     });
+    bottles.forEach(function (b) {
+      if (!(typeof b.id === "number" && b.id > 0)) {
+        b.id = ++maxId;
+      }
+    });
+  }
 
+  function encodeRepoPath(relPath) {
+    return relPath.split("/").map(encodeURIComponent).join("/");
+  }
+
+  function uploadBottleImage(token, b) {
+    var compressPromise = b.pendingBase64
+      ? Promise.resolve({ base64: b.pendingBase64 })
+      : resizeAndCompressImage(b.pendingFile);
+
+    return compressPromise.then(function (compressed) {
+      var ts = generateTimestamp();
+      var newRelPath = "images/bottle-" + b.id + "-" + ts + ".jpg";
+      var putUrl = API_BASE + encodeRepoPath(newRelPath);
+
+      return fetch(putUrl, {
+        method: "PUT",
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + token,
+          "X-GitHub-Api-Version": "2022-11-28",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: "Upload image for bottle No." + b.id + " via admin",
+          content: compressed.base64
+        })
+      }).then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (errBody) {
+            var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+            throw new Error("No." + b.id + "（" + b.distillery + "）の画像アップロードに失敗しました (HTTP " + res.status + ")" + detail);
+          });
+        }
+        return res.json().then(function () {
+          return newRelPath;
+        });
+      });
+    });
+  }
+
+  function deleteOldImageFromRepo(token, oldPath) {
+    var url = API_BASE + encodeRepoPath(oldPath);
+    var headers = {
+      "Accept": "application/vnd.github+json",
+      "Authorization": "Bearer " + token,
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+    return fetch(url + "?t=" + Date.now(), {
+      method: "GET",
+      headers: headers,
+      cache: "no-store"
+    })
+      .then(function (res) {
+        if (res.status === 404) {
+          return null;
+        }
+        if (!res.ok) {
+          throw new Error("旧画像 " + oldPath + " の情報取得に失敗 (HTTP " + res.status + ")");
+        }
+        return res.json();
+      })
+      .then(function (meta) {
+        if (!meta || !meta.sha) return;
+        return fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Accept": "application/vnd.github+json",
+            "Authorization": "Bearer " + token,
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: "Remove unused image " + oldPath + " via admin",
+            sha: meta.sha
+          })
+        }).then(function (delRes) {
+          if (!delRes.ok && delRes.status !== 404) {
+            throw new Error("旧画像 " + oldPath + " の削除に失敗 (HTTP " + delRes.status + ")");
+          }
+        });
+      });
+  }
+
+  function buildPayloadData(uploadedPathMap) {
     var normalized = bottles.map(function (b) {
-      var assignedId = (typeof b.id === "number" && b.id > 0) ? b.id : (++maxId);
       var ageStr = String(b.age ?? "").trim();
-      return {
-        id: assignedId,
+      var finalImage = uploadedPathMap[b._key] || b.image || null;
+      var obj = {
+        id: b.id,
         year: Number(String(b.year).trim()),
         bottler: String(b.bottler ?? "").trim(),
         distillery: String(b.distillery ?? "").trim(),
@@ -429,6 +690,10 @@
         stock: b.stock === "Yes" ? "Yes" : "No",
         tasting: b.tasting === "Yes" ? "Yes" : "No"
       };
+      if (finalImage) {
+        obj.image = finalImage;
+      }
+      return obj;
     });
 
     return sortBottlesByYear(normalized);
@@ -451,83 +716,164 @@
       refreshTokenUi();
     }
 
+    assignIdsToNewBottles();
+
     saveBtn.disabled = true;
     addBtn.disabled = true;
     showStatus("GitHub API へ保存中です...", "");
 
-    var headers = {
-      "Accept": "application/vnd.github+json",
-      "Authorization": "Bearer " + token,
-      "X-GitHub-Api-Version": "2022-11-28"
-    };
+    var uploadedPathMap = {};
+    var oldImagesToDelete = removedRowImages.slice();
 
-    fetch(API_URL + "?t=" + Date.now(), {
-      method: "GET",
-      headers: headers,
-      cache: "no-store"
-    })
-      .then(function (res) {
-        if (!res.ok) {
-          return res.json().catch(function () { return {}; }).then(function (errBody) {
-            var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
-            if (res.status === 401 || res.status === 403) {
-              throw new Error("認証エラー (HTTP " + res.status + "): トークンが無効・期限切れか、リポジトリへの権限が不足しています。" + detail);
+    var pendingBottles = bottles.filter(function (b) { return !!b.pendingFile; });
+
+    // 1. 新規・差し替え画像を順番にアップロード（1件でも失敗したら即時中断）
+    var uploadChain = Promise.resolve();
+    pendingBottles.forEach(function (b) {
+      uploadChain = uploadChain.then(function () {
+        showStatus("画像をアップロード中です: No." + b.id + " (" + escapeHtml(b.distillery) + ")...", "");
+        return uploadBottleImage(token, b).then(function (newPath) {
+          uploadedPathMap[b._key] = newPath;
+        });
+      });
+    });
+
+    uploadChain
+      .then(function () {
+        // 削除対象となる旧画像を収集（差し替えまたは画像削除されたボトル）
+        bottles.forEach(function (b) {
+          var nextImg = uploadedPathMap[b._key] || b.image || null;
+          if (b.originalImage && b.originalImage !== nextImg) {
+            if (oldImagesToDelete.indexOf(b.originalImage) === -1) {
+              oldImagesToDelete.push(b.originalImage);
             }
-            throw new Error("現在の bottles.json の取得に失敗しました (HTTP " + res.status + ")" + detail);
-          });
-        }
-        return res.json();
-      })
-      .then(function (meta) {
-        var currentSha = meta.sha;
-        var sortedData = buildPayloadData();
-        var jsonString = JSON.stringify(sortedData, null, 2) + "\n";
-        var contentBase64 = encodeBase64Utf8(jsonString);
-
-        return fetch(API_URL, {
-          method: "PUT",
-          headers: {
-            "Accept": "application/vnd.github+json",
-            "Authorization": "Bearer " + token,
-            "X-GitHub-Api-Version": "2022-11-28",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: "Update bottles via admin",
-            content: contentBase64,
-            sha: currentSha
-          })
-        }).then(function (putRes) {
-          if (!putRes.ok) {
-            return putRes.json().catch(function () { return {}; }).then(function (errBody) {
-              var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
-              if (putRes.status === 401 || putRes.status === 403 || putRes.status === 404) {
-                throw new Error("保存失敗 (HTTP " + putRes.status + "): トークンが無効・失効しているか、Contents: Read and write 権限がありません。" + detail);
-              }
-              throw new Error("bottles.json の更新コミットに失敗しました (HTTP " + putRes.status + ")" + detail);
-            });
           }
-          return putRes.json().then(function (putJson) {
-            return { putJson: putJson, sortedData: sortedData };
+        });
+
+        // 2. bottles.json の現在の sha を取得して更新コミット
+        showStatus("bottles.json を更新中です...", "");
+        var headers = {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + token,
+          "X-GitHub-Api-Version": "2022-11-28"
+        };
+
+        return fetch(API_URL + "?t=" + Date.now(), {
+          method: "GET",
+          headers: headers,
+          cache: "no-store"
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              return res.json().catch(function () { return {}; }).then(function (errBody) {
+                var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+                if (res.status === 401 || res.status === 403) {
+                  throw new Error("認証エラー (HTTP " + res.status + "): トークンが無効・期限切れか、リポジトリへの権限が不足しています。" + detail);
+                }
+                throw new Error("現在の bottles.json の取得に失敗しました (HTTP " + res.status + ")" + detail);
+              });
+            }
+            return res.json();
+          })
+          .then(function (meta) {
+            var currentSha = meta.sha;
+            var sortedData = buildPayloadData(uploadedPathMap);
+            var jsonString = JSON.stringify(sortedData, null, 2) + "\n";
+            var contentBase64 = encodeBase64Utf8(jsonString);
+
+            return fetch(API_URL, {
+              method: "PUT",
+              headers: {
+                "Accept": "application/vnd.github+json",
+                "Authorization": "Bearer " + token,
+                "X-GitHub-Api-Version": "2022-11-28",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                message: "Update bottles via admin",
+                content: contentBase64,
+                sha: currentSha
+              })
+            }).then(function (putRes) {
+              if (!putRes.ok) {
+                return putRes.json().catch(function () { return {}; }).then(function (errBody) {
+                  var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+                  if (putRes.status === 401 || putRes.status === 403 || putRes.status === 404) {
+                    throw new Error("保存失敗 (HTTP " + putRes.status + "): トークンが無効・失効しているか、Contents: Read and write 権限がありません。" + detail);
+                  }
+                  throw new Error("bottles.json の更新コミットに失敗しました (HTTP " + putRes.status + ")" + detail);
+                });
+              }
+              return putRes.json().then(function (putJson) {
+                return { putJson: putJson, sortedData: sortedData };
+              });
+            });
           });
+      })
+      .then(function (result) {
+        // 3. 不要になった旧画像ファイルを削除（失敗しても保存全体は失敗とせず警告表示に留める）
+        var deleteWarnings = [];
+        var delChain = Promise.resolve();
+        oldImagesToDelete.forEach(function (oldPath) {
+          delChain = delChain.then(function () {
+            return deleteOldImageFromRepo(token, oldPath).catch(function (delErr) {
+              deleteWarnings.push(delErr.message || String(delErr));
+            });
+          });
+        });
+
+        return delChain.then(function () {
+          return {
+            putJson: result.putJson,
+            sortedData: result.sortedData,
+            deleteWarnings: deleteWarnings
+          };
         });
       })
       .then(function (result) {
+        removedRowImages = [];
         bottles = result.sortedData.map(function (b) {
-          return Object.assign({ _key: nextTempKey++ }, b);
+          return {
+            _key: nextTempKey++,
+            id: b.id,
+            year: b.year,
+            bottler: b.bottler ?? "",
+            distillery: b.distillery ?? "",
+            age: b.age,
+            price: b.price,
+            stock: b.stock === "Yes" ? "Yes" : "No",
+            tasting: b.tasting === "Yes" ? "Yes" : "No",
+            image: b.image || null,
+            originalImage: b.image || null,
+            pendingFile: null,
+            pendingBase64: null,
+            previewUrl: null
+          };
         });
         setDirty(false);
         renderList();
 
         var commitUrl = (result.putJson && result.putJson.commit && result.putJson.commit.html_url) || ("https://github.com/" + REPO_OWNER + "/" + REPO_NAME + "/commits/main");
         var commitSha = (result.putJson && result.putJson.commit && result.putJson.commit.sha) ? result.putJson.commit.sha.slice(0, 7) : "確認する";
-        showStatus(
+        var msg =
           "保存が完了しました。コミット: <a href=\"" + escapeHtml(commitUrl) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(commitSha) + " (" + escapeHtml(commitUrl) + ")</a>\n" +
-          "※ 公開サイトへの反映は GitHub Pages のデプロイ後（1〜2分後）になります。",
-          "success"
-        );
+          "※ 公開サイトへの反映は GitHub Pages のデプロイ後（1〜2分後）になります。";
+        if (result.deleteWarnings && result.deleteWarnings.length > 0) {
+          msg += "\n（※ 注意: 不要になった旧画像ファイルの削除中に一部警告が発生しました: " + escapeHtml(result.deleteWarnings.join(" / ")) + "）";
+        }
+        showStatus(msg, "success");
       })
       .catch(function (err) {
+        // 新規アップロード済みの画像があれば次回保存時に再アップロードしなくて済むよう反映
+        bottles.forEach(function (b) {
+          if (uploadedPathMap[b._key]) {
+            b.image = uploadedPathMap[b._key];
+            b.pendingFile = null;
+            b.pendingBase64 = null;
+            b.previewUrl = null;
+          }
+        });
+        renderList();
         showStatus(escapeHtml(err.message || String(err)), "error");
       })
       .finally(function () {
@@ -570,9 +916,15 @@
             age: b.age,
             price: b.price,
             stock: b.stock === "Yes" ? "Yes" : "No",
-            tasting: b.tasting === "Yes" ? "Yes" : "No"
+            tasting: b.tasting === "Yes" ? "Yes" : "No",
+            image: b.image || null,
+            originalImage: b.image || null,
+            pendingFile: null,
+            pendingBase64: null,
+            previewUrl: null
           };
         });
+        removedRowImages = [];
         setDirty(false);
         renderList();
       })
