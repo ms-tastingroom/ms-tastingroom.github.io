@@ -271,7 +271,8 @@
     "age": 30,
     "price": 39600,
     "stock": "No",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-24-20261114143714.jpg"
   },
   {
     "id": 25,
@@ -291,7 +292,8 @@
     "age": 30,
     "price": 53460,
     "stock": "No",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-26-20261114143715.jpg"
   },
   {
     "id": 27,
@@ -311,7 +313,8 @@
     "age": 31,
     "price": 80300,
     "stock": "No",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-28-20261114143717.jpg"
   },
   {
     "id": 29,
@@ -412,7 +415,8 @@
     "age": 25,
     "price": 44550,
     "stock": "No",
-    "tasting": "Yes"
+    "tasting": "Yes",
+    "image": "images/bottle-37-20261114143718.jpg"
   },
   {
     "id": 38,
