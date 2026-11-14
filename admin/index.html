@@ -330,7 +330,7 @@
 
   function renderImageNoteText(b) {
     if (b.pendingFile) {
-      return "未保存: " + b.pendingFile.name;
+      return "未保存: " + (b.pendingFile.name || "クリップボード画像");
     }
     if (b.image) {
       return "登録済";
@@ -341,6 +341,24 @@
     return "";
   }
 
+  function readImageFromClipboard() {
+    if (!navigator.clipboard || typeof navigator.clipboard.read !== "function") {
+      return Promise.reject(new Error("お使いのブラウザ環境ではボタンからの直接読み取りに対応していません。対象行をクリックして Ctrl+V（Macは ⌘+V）で貼り付けてください。"));
+    }
+    return navigator.clipboard.read().then(function (items) {
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        for (var j = 0; j < item.types.length; j++) {
+          var type = item.types[j];
+          if (type.indexOf("image/") === 0) {
+            return item.getType(type);
+          }
+        }
+      }
+      throw new Error("クリップボードに画像データが見つかりませんでした。画像をコピーしてから再度お試しください。");
+    });
+  }
+
   function renderList() {
     bottleList.innerHTML = "";
     updateCountLabel();
@@ -348,6 +366,7 @@
     bottles.forEach(function (b) {
       var row = document.createElement("div");
       row.className = "item-row";
+      row.tabIndex = -1;
       row.dataset.key = String(b._key);
 
       var idText = b.id !== null && b.id !== undefined ? ("No." + b.id) : "新規";
@@ -395,10 +414,11 @@
         '<div class="field field-image">' +
           '<span class="field-label">画像</span>' +
           '<div class="img-cell">' +
-            '<div class="img-thumb-wrap">' + renderImagePreviewHtml(b) + '</div>' +
+            '<div class="img-thumb-wrap" title="クリックして Ctrl+V / ⌘+V でも画像を貼り付けられます">' + renderImagePreviewHtml(b) + '</div>' +
             '<div class="img-controls">' +
               '<input type="file" accept="image/*" class="img-file-input" />' +
               '<button type="button" class="img-btn-small img-select-btn">画像を選択</button>' +
+              '<button type="button" class="img-btn-small img-paste-btn">クリップボード貼付</button>' +
               '<button type="button" class="img-btn-small img-remove-btn"' + (hasAnyImage ? '' : ' disabled') + '>画像を削除</button>' +
               '<span class="img-state-note">' + escapeHtml(renderImageNoteText(b)) + '</span>' +
             '</div>' +
@@ -424,9 +444,28 @@
 
       var fileInput = row.querySelector(".img-file-input");
       var selectBtn = row.querySelector(".img-select-btn");
+      var pasteBtn = row.querySelector(".img-paste-btn");
       var removeImgBtn = row.querySelector(".img-remove-btn");
       var thumbWrap = row.querySelector(".img-thumb-wrap");
       var stateNote = row.querySelector(".img-state-note");
+
+      function applyBlobImage(blobOrFile, displayLabel) {
+        return resizeAndCompressImage(blobOrFile)
+          .then(function (compressed) {
+            if (!blobOrFile.name) {
+              try {
+                Object.defineProperty(blobOrFile, "name", { value: displayLabel || "クリップボード画像" });
+              } catch (_) {}
+            }
+            b.pendingFile = blobOrFile;
+            b.pendingBase64 = compressed.base64;
+            b.previewUrl = compressed.dataUrl;
+            thumbWrap.innerHTML = renderImagePreviewHtml(b);
+            stateNote.textContent = renderImageNoteText(b);
+            removeImgBtn.disabled = false;
+            setDirty(true);
+          });
+      }
 
       selectBtn.addEventListener("click", function () {
         fileInput.click();
@@ -435,20 +474,41 @@
       fileInput.addEventListener("change", function () {
         var file = fileInput.files && fileInput.files[0];
         if (!file) return;
-        resizeAndCompressImage(file)
-          .then(function (compressed) {
-            b.pendingFile = file;
-            b.pendingBase64 = compressed.base64;
-            b.previewUrl = compressed.dataUrl;
-            thumbWrap.innerHTML = renderImagePreviewHtml(b);
-            stateNote.textContent = renderImageNoteText(b);
-            removeImgBtn.disabled = false;
-            setDirty(true);
-          })
+        applyBlobImage(file, file.name)
           .catch(function (err) {
             alert("画像の読み込みに失敗しました: " + (err.message || String(err)));
             fileInput.value = "";
           });
+      });
+
+      pasteBtn.addEventListener("click", function () {
+        readImageFromClipboard()
+          .then(function (blob) {
+            return applyBlobImage(blob, "クリップボード画像");
+          })
+          .catch(function (err) {
+            row.focus();
+            alert((err.message || String(err)) + "\n（※ この行で Ctrl+V / ⌘+V キーを押して直接貼り付けることもできます）");
+          });
+      });
+
+      row.addEventListener("paste", function (e) {
+        var cd = e.clipboardData || window.clipboardData;
+        if (!cd || !cd.items) return;
+        for (var i = 0; i < cd.items.length; i++) {
+          var item = cd.items[i];
+          if (item.type && item.type.indexOf("image/") === 0) {
+            var blob = item.getAsFile();
+            if (blob) {
+              e.preventDefault();
+              applyBlobImage(blob, "クリップボード画像")
+                .catch(function (err) {
+                  alert("クリップボード画像の読み込みに失敗しました: " + (err.message || String(err)));
+                });
+              return;
+            }
+          }
+        }
       });
 
       removeImgBtn.addEventListener("click", function () {
