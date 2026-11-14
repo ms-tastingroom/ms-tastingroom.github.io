@@ -131,6 +131,17 @@
     "tasting": "No"
   },
   {
+    "id": 58,
+    "year": 1988,
+    "bottler": "Art Session Gold",
+    "distillery": "Strathmill",
+    "age": 38,
+    "price": 59950,
+    "stock": "No",
+    "tasting": "Yes",
+    "image": "images/bottle-58-20261114142438.jpg"
+  },
+  {
     "id": 14,
     "year": 1989,
     "bottler": "Spirits Shop Selection",
@@ -179,6 +190,17 @@
     "price": 217800,
     "stock": "Yes",
     "tasting": "No"
+  },
+  {
+    "id": 59,
+    "year": 1990,
+    "bottler": "Blossoms",
+    "distillery": "Strathmill",
+    "age": 35,
+    "price": 66000,
+    "stock": "Yes",
+    "tasting": "No",
+    "image": "images/bottle-59-20261114142442.jpg"
   },
   {
     "id": 19,
