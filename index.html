@@ -71,14 +71,14 @@
     return d;
   }
 
-  function renderRow(b) {
+  function renderRow(b, showImages) {
     var name = escapeHtml(formatDistillery(b.distillery));
     var bottler = escapeHtml(b.bottler);
     var ageStr = (b.age !== null && b.age !== undefined && b.age !== "") ? (b.age + "年") : "―";
     var priceStr = "¥" + Number(b.price).toLocaleString("ja-JP");
     var stockStr = b.stock === "Yes" ? "可" : "―";
     var tastingStr = b.tasting === "Yes" ? "可" : "―";
-    var imgHtml = b.image
+    var imgHtml = (showImages && b.image)
       ? "  <img class=\"thumb\" src=\"" + escapeHtml(b.image) + "\" alt=\"" + escapeHtml(b.distillery) + "\" loading=\"lazy\" />\n"
       : "";
     return (
@@ -95,12 +95,40 @@
     );
   }
 
-  fetch("./bottles.json", { cache: "no-cache" })
+  var settingsPromise = fetch("./settings.json", { cache: "no-cache" })
+    .then(function (res) {
+      if (!res.ok) throw new Error("Failed to load settings.json: " + res.status);
+      return res.json();
+    })
+    .then(function (settings) {
+      var introEl = document.querySelector(".intro");
+      var footerEl = document.querySelector("footer p");
+      if (settings && typeof settings.intro === "string" && introEl) {
+        introEl.textContent = settings.intro;
+        introEl.style.display = settings.intro === "" ? "none" : "";
+      }
+      if (settings && typeof settings.footer === "string" && footerEl) {
+        footerEl.textContent = settings.footer;
+        footerEl.style.display = settings.footer === "" ? "none" : "";
+      }
+      return settings;
+    })
+    .catch(function () {
+      return null;
+    });
+
+  var bottlesPromise = fetch("./bottles.json", { cache: "no-cache" })
     .then(function (res) {
       if (!res.ok) throw new Error("Failed to load bottles.json: " + res.status);
       return res.json();
-    })
-    .then(function (bottles) {
+    });
+
+  Promise.all([settingsPromise, bottlesPromise])
+    .then(function (results) {
+      var settings = results[0];
+      var bottles = results[1];
+      var showImages = (settings && typeof settings.showImages === "boolean") ? settings.showImages : true;
+
       var sorted = bottles
         .map(function (item, idx) { return { item: item, idx: idx }; })
         .sort(function (a, b) { return (a.item.year - b.item.year) || (a.idx - b.idx); })
@@ -110,7 +138,7 @@
       for (var i = 0; i < sorted.length; i++) {
         var b = sorted[i];
         if (b.stock === "Yes" || b.tasting === "Yes") {
-          avail.push(renderRow(b));
+          avail.push(renderRow(b, showImages));
         }
       }
 

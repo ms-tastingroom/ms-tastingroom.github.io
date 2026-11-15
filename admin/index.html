@@ -18,6 +18,12 @@
   .token-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .token-row input[type="password"], .token-row input[type="text"]{flex:1;min-width:220px;padding:6px 8px;border:1px solid #000;font-size:14px;background:#fff;color:#000}
   .help{font-size:.8rem;margin:6px 0 0;color:#222}
+  .settings-grid{display:flex;flex-direction:column;gap:10px}
+  .settings-field label{display:block;font-weight:700;font-size:.85rem;margin-bottom:4px}
+  .settings-field textarea{width:100%;padding:6px 8px;border:1px solid #777;background:#fff;color:#000;font-size:14px;font-family:inherit;resize:vertical}
+  .settings-field textarea:focus{outline:2px solid #000;border-color:#000}
+  .settings-toggle{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.9rem;cursor:pointer;padding-top:2px}
+  .settings-toggle input[type="checkbox"]{width:18px;height:18px;cursor:pointer}
   button,.file-label{padding:6px 12px;border:1px solid #000;background:#fff;color:#000;font-size:14px;cursor:pointer;font-family:inherit;display:inline-block;text-align:center}
   button:hover,.file-label:hover{background:#f0f0f0}
   button:disabled{opacity:.5;cursor:not-allowed}
@@ -46,8 +52,8 @@
   .del-btn{padding:5px 6px;font-size:.8rem;width:100%}
 
   .img-cell{display:flex;gap:8px;align-items:flex-start}
-  .img-thumb-wrap{width:54px;min-height:54px;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fafafa;flex-shrink:0;overflow:hidden}
-  .img-thumb-wrap img{width:54px;height:auto;display:block}
+  .img-thumb-wrap{width:54px;height:72px;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;flex-shrink:0;overflow:hidden}
+  .img-thumb-wrap img{width:54px;height:72px;object-fit:contain;display:block}
   .img-none{font-size:.7rem;color:#666;text-align:center;line-height:1.2;padding:2px}
   .img-controls{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
   .img-file-input{font-size:.75rem;width:100%;display:none}
@@ -71,8 +77,8 @@
     .id-cell{padding-top:2px;font-size:.95rem}
     .item-row input[type="text"],.item-row input[type="number"],.item-row select{font-size:16px;padding:8px}
     .img-btn-small,.del-btn{padding:8px;font-size:14px}
-    .img-thumb-wrap{width:72px;min-height:72px}
-    .img-thumb-wrap img{width:72px}
+    .img-thumb-wrap{width:72px;height:96px}
+    .img-thumb-wrap img{width:72px;height:96px}
   }
 </style>
 </head>
@@ -90,6 +96,26 @@
     </div>
     <p class="help" id="token-status"></p>
     <p class="help">※ トークンはこのブラウザの localStorage にのみ保存されます（対象: ms-tastingroom/ms-tastingroom.github.io / 権限: Contents Read and write）。</p>
+  </div>
+
+  <div class="box">
+    <p class="box-title">サイト文言・表示設定（settings.json）</p>
+    <div class="settings-grid">
+      <div class="settings-field">
+        <label for="setting-intro">冒頭文（intro） ※空欄にすると非表示になります</label>
+        <textarea id="setting-intro" rows="2">蒸留年がラベルに明記されたボトルを、蒸留年の古い順に並べたリストです。</textarea>
+      </div>
+      <div class="settings-field">
+        <label for="setting-footer">フッター文言（footer） ※空欄にすると非表示になります</label>
+        <textarea id="setting-footer" rows="2">20歳未満の方への酒類の販売・提供は法律で禁止されています。お酒は20歳になってから。飲酒運転は法律で禁止されています。</textarea>
+      </div>
+      <div class="settings-field">
+        <label class="settings-toggle" for="setting-show-images">
+          <input type="checkbox" id="setting-show-images" checked />
+          <span>公開ページでボトル写真を表示する（オフにすると全ボトルの写真を一括で非表示にします）</span>
+        </label>
+      </div>
+    </div>
   </div>
 
   <div class="toolbar">
@@ -127,13 +153,21 @@
   var REPO_OWNER = "ms-tastingroom";
   var REPO_NAME = "ms-tastingroom.github.io";
   var FILE_PATH = "bottles.json";
+  var SETTINGS_PATH = "settings.json";
   var API_BASE = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/";
   var API_URL = API_BASE + FILE_PATH;
+  var SETTINGS_API_URL = API_BASE + SETTINGS_PATH;
+
+  var DEFAULT_INTRO = "蒸留年がラベルに明記されたボトルを、蒸留年の古い順に並べたリストです。";
+  var DEFAULT_FOOTER = "20歳未満の方への酒類の販売・提供は法律で禁止されています。お酒は20歳になってから。飲酒運転は法律で禁止されています。";
 
   var tokenInput = document.getElementById("token-input");
   var tokenSaveBtn = document.getElementById("token-save-btn");
   var tokenClearBtn = document.getElementById("token-clear-btn");
   var tokenStatus = document.getElementById("token-status");
+  var settingIntro = document.getElementById("setting-intro");
+  var settingFooter = document.getElementById("setting-footer");
+  var settingShowImages = document.getElementById("setting-show-images");
   var addBtn = document.getElementById("add-btn");
   var saveBtn = document.getElementById("save-btn");
   var countLabel = document.getElementById("count-label");
@@ -143,6 +177,7 @@
 
   var bottles = [];
   var removedRowImages = [];
+  var settingsSha = null;
   var isDirty = false;
   var nextTempKey = 1;
   var lastTimestampNum = 0;
@@ -155,6 +190,10 @@
       dirtyBadge.classList.remove("visible");
     }
   }
+
+  settingIntro.addEventListener("input", function () { setDirty(true); });
+  settingFooter.addEventListener("input", function () { setDirty(true); });
+  settingShowImages.addEventListener("change", function () { setDirty(true); });
 
   window.addEventListener("beforeunload", function (e) {
     if (isDirty) {
@@ -251,25 +290,87 @@
     return String(num);
   }
 
+  function isNearWhite(px, idx) {
+    return px[idx] >= 245 && px[idx + 1] >= 245 && px[idx + 2] >= 245;
+  }
+
   function resizeAndCompressImage(file) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.onload = function (e) {
         var img = new Image();
         img.onload = function () {
-          var srcW = img.naturalWidth || img.width;
-          var srcH = img.naturalHeight || img.height;
-          if (!srcW || !srcH) {
+          var origW = img.naturalWidth || img.width;
+          var origH = img.naturalHeight || img.height;
+          if (!origW || !origH) {
             reject(new Error("画像サイズの取得に失敗しました"));
             return;
           }
-          // 3:4 キャンバス（最大 900x1200、元画像が小さい場合は拡大せず元サイズ基準で 3:4 にする）
-          var unit = Math.min(300, Math.max(1, Math.ceil(srcW / 3), Math.ceil(srcH / 4)));
+
+          // 1. 一時キャンバスに白背景で描画し、四辺の一様な白余白（各チャンネル >= 245）をトリミング
+          var srcCanvas = document.createElement("canvas");
+          srcCanvas.width = origW;
+          srcCanvas.height = origH;
+          var srcCtx = srcCanvas.getContext("2d");
+          srcCtx.fillStyle = "#ffffff";
+          srcCtx.fillRect(0, 0, origW, origH);
+          srcCtx.drawImage(img, 0, 0, origW, origH);
+
+          var imgData = srcCtx.getImageData(0, 0, origW, origH);
+          var px = imgData.data;
+
+          var top = 0, bottom = origH - 1, left = 0, right = origW - 1;
+          while (top < bottom) {
+            var rowWhite = true;
+            for (var x = 0; x < origW; x++) {
+              if (!isNearWhite(px, (top * origW + x) * 4)) { rowWhite = false; break; }
+            }
+            if (!rowWhite) break;
+            top++;
+          }
+          while (bottom > top) {
+            var bRowWhite = true;
+            for (var bx = 0; bx < origW; bx++) {
+              if (!isNearWhite(px, (bottom * origW + bx) * 4)) { bRowWhite = false; break; }
+            }
+            if (!bRowWhite) break;
+            bottom--;
+          }
+          while (left < right) {
+            var colWhite = true;
+            for (var y = top; y <= bottom; y++) {
+              if (!isNearWhite(px, (y * origW + left) * 4)) { colWhite = false; break; }
+            }
+            if (!colWhite) break;
+            left++;
+          }
+          while (right > left) {
+            var rColWhite = true;
+            for (var ry = top; ry <= bottom; ry++) {
+              if (!isNearWhite(px, (ry * origW + right) * 4)) { rColWhite = false; break; }
+            }
+            if (!rColWhite) break;
+            right--;
+          }
+
+          var cropW = right - left + 1;
+          var cropH = bottom - top + 1;
+          if (cropW < 1 || cropH < 1) {
+            left = 0; top = 0; cropW = origW; cropH = origH;
+          }
+
+          // 2. トリミング後の中身を 3:4 白キャンバス（最大 900x1200）の高さ約92%に収め、左右中央寄せで配置
+          var origMax = Math.max(origW, origH);
+          var desiredH = Math.max(cropH / 0.92, origMax);
+          var unit = Math.min(300, Math.max(1, Math.ceil(desiredH / 4)));
           var canvasW = unit * 3;
           var canvasH = unit * 4;
-          var scale = Math.min(1, canvasW / srcW, canvasH / srcH);
-          var drawW = Math.round(srcW * scale);
-          var drawH = Math.round(srcH * scale);
+
+          var targetH = canvasH * 0.92;
+          var targetW = canvasW * 0.96;
+          var scale = Math.min(targetW / cropW, targetH / cropH);
+          var drawW = Math.round(cropW * scale);
+          var drawH = Math.round(cropH * scale);
           var offsetX = Math.round((canvasW - drawW) / 2);
           var offsetY = Math.round((canvasH - drawH) / 2);
 
@@ -279,7 +380,8 @@
           var ctx = canvas.getContext("2d");
           ctx.fillStyle = "#ffffff";
           ctx.fillRect(0, 0, canvasW, canvasH);
-          ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+          ctx.drawImage(srcCanvas, left, top, cropW, cropH, offsetX, offsetY, drawW, drawH);
+
           var dataUrl = canvas.toDataURL("image/jpeg", 0.82);
           var prefix = "data:image/jpeg;base64,";
           if (dataUrl.indexOf(prefix) !== 0) {
@@ -657,6 +759,76 @@
     return relPath.split("/").map(encodeURIComponent).join("/");
   }
 
+  function saveSettingsToRepo(token) {
+    var headers = {
+      "Accept": "application/vnd.github+json",
+      "Authorization": "Bearer " + token,
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+
+    return fetch(SETTINGS_API_URL + "?t=" + Date.now(), {
+      method: "GET",
+      headers: headers,
+      cache: "no-store"
+    })
+      .then(function (res) {
+        if (res.status === 404) {
+          return { sha: null };
+        }
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (errBody) {
+            var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+            if (res.status === 401 || res.status === 403) {
+              throw new Error("認証エラー (HTTP " + res.status + "): トークンが無効・期限切れか、権限が不足しています。" + detail);
+            }
+            throw new Error("settings.json の情報取得に失敗しました (HTTP " + res.status + ")" + detail);
+          });
+        }
+        return res.json();
+      })
+      .then(function (meta) {
+        var currentSha = (meta && meta.sha) || settingsSha || null;
+        var settingsObj = {
+          intro: settingIntro.value,
+          footer: settingFooter.value,
+          showImages: !!settingShowImages.checked
+        };
+        var jsonStr = JSON.stringify(settingsObj, null, 2) + "\n";
+        var bodyObj = {
+          message: "Update settings via admin",
+          content: encodeBase64Utf8(jsonStr)
+        };
+        if (currentSha) {
+          bodyObj.sha = currentSha;
+        }
+
+        return fetch(SETTINGS_API_URL, {
+          method: "PUT",
+          headers: {
+            "Accept": "application/vnd.github+json",
+            "Authorization": "Bearer " + token,
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(bodyObj)
+        });
+      })
+      .then(function (putRes) {
+        if (!putRes.ok) {
+          return putRes.json().catch(function () { return {}; }).then(function (errBody) {
+            var detail = errBody && errBody.message ? " (" + errBody.message + ")" : "";
+            throw new Error("settings.json の保存に失敗しました (HTTP " + putRes.status + ")" + detail);
+          });
+        }
+        return putRes.json();
+      })
+      .then(function (putJson) {
+        if (putJson && putJson.content && putJson.content.sha) {
+          settingsSha = putJson.content.sha;
+        }
+      });
+  }
+
   function uploadBottleImage(token, b) {
     var compressPromise = b.pendingBase64
       ? Promise.resolve({ base64: b.pendingBase64 })
@@ -780,25 +952,27 @@
 
     saveBtn.disabled = true;
     addBtn.disabled = true;
-    showStatus("GitHub API へ保存中です...", "");
+    showStatus("サイト文言・表示設定（settings.json）を保存中です...", "");
 
     var uploadedPathMap = {};
     var oldImagesToDelete = removedRowImages.slice();
-
     var pendingBottles = bottles.filter(function (b) { return !!b.pendingFile; });
 
-    // 1. 新規・差し替え画像を順番にアップロード（1件でも失敗したら即時中断）
-    var uploadChain = Promise.resolve();
-    pendingBottles.forEach(function (b) {
-      uploadChain = uploadChain.then(function () {
-        showStatus("画像をアップロード中です: No." + b.id + " (" + escapeHtml(b.distillery) + ")...", "");
-        return uploadBottleImage(token, b).then(function (newPath) {
-          uploadedPathMap[b._key] = newPath;
+    // 1. settings.json を保存（失敗したら以降の処理は行わず中断）
+    saveSettingsToRepo(token)
+      .then(function () {
+        // 2. 新規・差し替え画像を順番にアップロード（1件でも失敗したら即時中断）
+        var uploadChain = Promise.resolve();
+        pendingBottles.forEach(function (b) {
+          uploadChain = uploadChain.then(function () {
+            showStatus("画像をアップロード中です: No." + b.id + " (" + escapeHtml(b.distillery) + ")...", "");
+            return uploadBottleImage(token, b).then(function (newPath) {
+              uploadedPathMap[b._key] = newPath;
+            });
+          });
         });
-      });
-    });
-
-    uploadChain
+        return uploadChain;
+      })
       .then(function () {
         // 削除対象となる旧画像を収集（差し替えまたは画像削除されたボトル）
         bottles.forEach(function (b) {
@@ -810,7 +984,7 @@
           }
         });
 
-        // 2. bottles.json の現在の sha を取得して更新コミット
+        // 3. bottles.json の現在の sha を取得して更新コミット
         showStatus("bottles.json を更新中です...", "");
         var headers = {
           "Accept": "application/vnd.github+json",
@@ -871,7 +1045,7 @@
           });
       })
       .then(function (result) {
-        // 3. 不要になった旧画像ファイルを削除（失敗しても保存全体は失敗とせず警告表示に留める）
+        // 4. 不要になった旧画像ファイルを削除（失敗しても保存全体は失敗とせず警告表示に留める）
         var deleteWarnings = [];
         var delChain = Promise.resolve();
         oldImagesToDelete.forEach(function (oldPath) {
@@ -924,7 +1098,6 @@
         showStatus(msg, "success");
       })
       .catch(function (err) {
-        // 新規アップロード済みの画像があれば次回保存時に再アップロードしなくて済むよう反映
         bottles.forEach(function (b) {
           if (uploadedPathMap[b._key]) {
             b.image = uploadedPathMap[b._key];
@@ -942,8 +1115,42 @@
       });
   });
 
+  function loadSettingsData() {
+    fetch(SETTINGS_API_URL + "?t=" + Date.now(), {
+      method: "GET",
+      headers: { "Accept": "application/vnd.github+json" },
+      cache: "no-store"
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("Settings API fetch failed: " + res.status);
+        return res.json();
+      })
+      .then(function (meta) {
+        settingsSha = meta.sha || null;
+        return JSON.parse(decodeBase64Utf8(meta.content));
+      })
+      .catch(function () {
+        return fetch("../settings.json?t=" + Date.now(), { cache: "no-store" })
+          .then(function (res) {
+            if (!res.ok) throw new Error("Local settings fetch failed");
+            return res.json();
+          })
+          .catch(function () {
+            return null;
+          });
+      })
+      .then(function (settings) {
+        if (settings && typeof settings === "object") {
+          settingIntro.value = typeof settings.intro === "string" ? settings.intro : DEFAULT_INTRO;
+          settingFooter.value = typeof settings.footer === "string" ? settings.footer : DEFAULT_FOOTER;
+          settingShowImages.checked = typeof settings.showImages === "boolean" ? settings.showImages : true;
+        }
+      });
+  }
+
   function loadInitialData() {
     refreshTokenUi();
+    loadSettingsData();
 
     fetch(API_URL + "?t=" + Date.now(), {
       method: "GET",
